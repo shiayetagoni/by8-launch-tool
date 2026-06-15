@@ -1,0 +1,92 @@
+// Version: 1.0.0
+type AllocationBreakdown__854283818 =
+  {
+    community : Nat;
+    liquidity : Nat;
+    marketing : Nat;
+    reserve : Nat;
+    team : Nat
+  };
+type BoostRecord__450043324 =
+  {mint : Text; tier : Float; timestamp : Int; txHash : Text; wallet : Text};
+type Data__628993992<T> = {var count : Nat__1040412405; elements : [var ?T]};
+type Internal__1007892817<T> =
+  {children : [var ?Node__918630472<T>]; data : Data__628993992<T>};
+type LaunchStatus__64196593 = {#failed; #paid; #pending};
+type Leaf__693487502<T> = {data : Data__628993992<T>};
+type Nat__1040412405 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__918630472<T> =
+  {#internal : Internal__1007892817<T>; #leaf : Leaf__693487502<T>};
+type TokenLaunchRecord__226636557 =
+  {
+    allocationBreakdown : AllocationBreakdown__854283818;
+    decimals : Nat8;
+    description : Text;
+    id : Text;
+    launchType : Text;
+    paymentTxHash : Text;
+    paymentWallet : Text;
+    selectedChain : Text;
+    selectedPlatform : Text;
+    var status : LaunchStatus__64196593;
+    supply : Nat;
+    symbol : Text;
+    timestamp : Int;
+    tokenName : Text
+  };
+type WhaleRecord__1063748853 =
+  {
+    var airdropClaimed : Bool;
+    var isVerified : Bool;
+    nftCount : Nat;
+    solBalance : Float;
+    timestamp : Int;
+    tokenBalance : Float;
+    tokenMint : Text;
+    var txHash : ?Text;
+    walletAddress : Text
+  };
+type WhaleRecord__532079623 = WhaleRecord__1063748853;
+actor {
+  stable INVITE_HASH : Text;
+  stable boosts :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?BoostRecord__450043324]];
+      var elementIndex : Nat__1040412405
+    };
+  stable chatIdStore :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?Int]];
+      var elementIndex : Nat__1040412405
+    };
+  stable httpRequestCycles : Nat;
+  stable lastErrorStore :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?Text]];
+      var elementIndex : Nat__1040412405
+    };
+  stable launches :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?TokenLaunchRecord__226636557]];
+      var elementIndex : Nat__1040412405
+    };
+  stable telegramErrorLog :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?Text]];
+      var elementIndex : Nat__1040412405
+    };
+  stable uniqueMints :
+    {var root : Node__918630472<Text>; var size : Nat__1040412405};
+  stable whales :
+    {
+      var blockIndex : Nat__1040412405;
+      var blocks : [var [var ?WhaleRecord__532079623]];
+      var elementIndex : Nat__1040412405
+    }
+};

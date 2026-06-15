@@ -1,0 +1,246 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type WhaleStats = 
+ record {
+   airdropClaimsCount: nat;
+   totalTokenBalance: float64;
+   totalVerifiedWhales: nat;
+   totalWhalesConnected: nat;
+ };
+type WhaleSnapshot = 
+ record {
+   airdropClaimed: bool;
+   isVerified: bool;
+   nftCount: nat;
+   solBalance: float64;
+   timestamp: int;
+   tokenBalance: float64;
+   tokenMint: text;
+   txHash: opt text;
+   walletAddress: text;
+ };
+type WalletStats = 
+ record {
+   boostCount: nat;
+   lastBoostTimestamp: int;
+   recentBoosts: vec BoostRecord;
+   tokensBoosted: vec text;
+   totalSol: float64;
+   wallet: text;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type TokenMetadata = 
+ record {
+   chain: text;
+   chainId: nat;
+   decimals: nat8;
+   description: opt text;
+   imageUrl: opt text;
+   mint: text;
+   name: text;
+   supply: nat;
+   symbol: text;
+   telegram: opt text;
+   twitter: opt text;
+   website: opt text;
+ };
+type TelegramStatus = 
+ record {
+   chatId: opt int;
+   connected: bool;
+   errorLog: vec text;
+   lastResponse: text;
+ };
+type LeaderboardEntry = 
+ record {
+   boostCount: nat;
+   lastBoostTimestamp: int;
+   tokensBoosted: vec text;
+   totalSol: float64;
+   wallet: text;
+ };
+type LaunchSnapshot = 
+ record {
+   allocationBreakdown: AllocationBreakdown;
+   decimals: nat8;
+   description: text;
+   id: text;
+   launchType: text;
+   paymentTxHash: text;
+   paymentWallet: text;
+   selectedChain: text;
+   selectedPlatform: text;
+   status: text;
+   supply: nat;
+   symbol: text;
+   timestamp: int;
+   tokenName: text;
+ };
+type LaunchData = 
+ record {
+   allocationBreakdown: AllocationBreakdown;
+   decimals: nat8;
+   description: text;
+   launchType: text;
+   paymentTxHash: text;
+   paymentWallet: text;
+   selectedChain: text;
+   selectedPlatform: text;
+   supply: nat;
+   symbol: text;
+   tokenName: text;
+ };
+type BoostRecord = 
+ record {
+   mint: text;
+   tier: float64;
+   timestamp: int;
+   txHash: text;
+   wallet: text;
+ };
+type AnalyticsResult = 
+ record {
+   avgBoostSol: float64;
+   recentBoosts: vec BoostRecord;
+   topWallet: opt text;
+   totalBoosts: nat;
+   totalSolCollected: float64;
+   uniqueTokens: nat;
+ };
+type AllocationBreakdown = 
+ record {
+   community: nat;
+   liquidity: nat;
+   marketing: nat;
+   reserve: nat;
+   team: nat;
+ };
+service : {
+  autoDiscoverChatId: () -> (opt int);
+  claimAirdrop: (walletAddress: text) -> (variant {
+                                            err: text;
+                                            ok;
+                                          });
+  connectWhaleWallet: (walletAddress: text, tokenMint: text, tokenBalance:
+   float64, solBalance: float64, nftCount: nat) ->
+   (variant {
+      err: text;
+      ok: WhaleSnapshot;
+    });
+  createLaunchRecord: (data: LaunchData) -> (variant {
+                                               err: text;
+                                               ok: text;
+                                             });
+  debugTelegramStatus: () -> (text);
+  /// Fetch real on-chain token metadata using a three-source Solana cascade:
+  ///   1. Solscan (primary)  2. Jupiter (fallback)  3. Dexscreener (fallback)
+  fetchTokenMetadata: (ca: text) -> (variant {
+                                       err: text;
+                                       ok: TokenMetadata;
+                                     });
+  forceSetChatId: (id: int) -> ();
+  getAnalytics: () -> (AnalyticsResult) query;
+  getChatId: () -> (opt int) query;
+  getCurrentChatId: () -> (opt int) query;
+  getDebugInfo: () -> (text);
+  getLastTelegramError: () -> (text) query;
+  getLaunchRecord: (id: text) -> (opt LaunchSnapshot) query;
+  getRawUpdates: () -> (text);
+  getRecentBoosts: (limit: nat) -> (vec BoostRecord) query;
+  getTelegramStatus: () -> (TelegramStatus) query;
+  getTelegramUpdates: () -> (variant {
+                               err: text;
+                               ok: text;
+                             });
+  getTokenDetail: (mint: text) -> (variant {
+                                     err: text;
+                                     ok: text;
+                                   });
+  getTokenHistory: (mint: text) -> (vec BoostRecord) query;
+  getTopBoosters: (limit: nat) -> (vec LeaderboardEntry) query;
+  getTopBoostersByPeriod: (limit: nat, periodDays: nat) ->
+   (vec LeaderboardEntry) query;
+  getTrendingTokens: (limit: nat) -> (variant {
+                                        err: text;
+                                        ok: text;
+                                      });
+  getWalletStats: (wallet: text) -> (opt WalletStats) query;
+  getWhaleInfo: (walletAddress: text) -> (opt WhaleSnapshot) query;
+  getWhaleLeaderboard: (limit: nat) -> (vec WhaleSnapshot) query;
+  getWhaleRecord: (walletAddress: text) -> (opt WhaleSnapshot) query;
+  getWhaleStats: () -> (WhaleStats) query;
+  handleTelegramUpdate: (body: text) -> ();
+  initSeedData: () -> ();
+  initializeTelegram: (forceChatId: opt int) -> (opt int);
+  /// Multi-chain token lookup: auto-detects Solana vs EVM from CA format.
+  /// chainHint (optional): "ethereum", "base", "bsc", "polygon", "arbitrum", "avalanche"
+  lookupTokenMultiChain: (ca: text, chainHint: opt text) ->
+   (variant {
+      err: text;
+      ok: TokenMetadata;
+    });
+  notifyBoostSubmitted: (mint: text, packageName: text, sol: text, txHash:
+   text) -> ();
+  notifyCaPasted: (ca: text) -> ();
+  notifyPackageSelected: (packageName: text, sol: text) -> ();
+  notifySiteVisit: (details: text) -> ();
+  notifyTxHashEntered: (txHash: text, mint: text) -> ();
+  recordAction: (action: text, details: text) -> ();
+  recordBoost: (mint: text, tier: float64, txHash: text, timestamp: int) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  recordBoostWithWallet: (mint: text, tier: float64, txHash: text, timestamp:
+   int, wallet: text) -> (variant {
+                            err: text;
+                            ok;
+                          });
+  recordWhaleConnect: (walletAddress: text, tokenMint: text, tokenBalance:
+   float64, _timestamp: int) -> (variant {
+                                   err: text;
+                                   ok;
+                                 });
+  registerWhaleAirdrop: (walletAddress: text, txHash: text) ->
+   (variant {
+      err: text;
+      ok: WhaleSnapshot;
+    });
+  sendTelegramMessage: (msg: text) -> (bool);
+  sendTestMessage: () -> (text);
+  setChatId: (id: int) -> ();
+  setChatIdFromGroup: () -> (text);
+  submitWhaleVerification: (walletAddress: text, txHash: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  transformDexscreener: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  transformHelius: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  transformJupiter: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  transformSolscan: (input: TransformationInput) ->
+   (TransformationOutput) query;
+}

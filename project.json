@@ -1,0 +1,26 @@
+{
+  "overview": "BY8 Launch Tool is a premium multi-chain crypto analytics and token launch platform with real-time visibility tracking, engagement insights, and a full token launch flow for any blockchain.",
+  "features": [
+    "Multi-chain contract address lookup (Solana, Ethereum, Base, BSC, Polygon, Arbitrum, Avalanche)",
+    "Full token launch form with tokenomics, fee estimation, and platform selector",
+    "Premium cyberpunk dark UI with frosted glass, neon accents, and 60fps spring animations",
+    "Real-time dashboard with visibility score, engagement metrics, and activity feed",
+    "Whale verification with read-only wallet connect and 7M+ token holder check",
+    "Community page with live activity feed and recently tracked tokens",
+    "Export reports as PDF/CSV or shareable links",
+    "Achievement badges with haptic and sound celebrations"
+  ],
+  "category": "crypto-analytics",
+  "tags": [
+    "crypto",
+    "web3",
+    "token-launch",
+    "analytics",
+    "multi-chain",
+    "solana",
+    "ethereum",
+    "defi",
+    "saas"
+  ],
+  "last_updated": "2026-06-02T15:28:05.281Z"
+}
